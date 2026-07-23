@@ -38,3 +38,16 @@
 
 ---
 
+## Day 4: API Endpoints for File Uploads (7/23/2026)
+
+---
+
+1. Created [prescription.py] endpoint to accept prescription image uploads, then save files locally under `uploads/prescriptions/` and create matching database records in PostgreSQL.
+2. Created [blood_reports.py] endpoint to accept PDF/image uploads, save files locally under `uploads/blood_reports/` and reate matching database records in PostgreSQL.
+3. Created [patient.py] endpoint to handle patient registration and listing.
+4. Connected all sub-routers to the main API router in [router.py]
+5. The endpoints are not running with the FastAPI, I will fix it tommorrow
+
+---
+
+
