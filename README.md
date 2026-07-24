@@ -1,5 +1,9 @@
 # SmartLab
 
+---
+## MODULE 1
+---
+
 ## Day 1: Backend Initialization (7/20/2026)
 
 ---
@@ -46,8 +50,17 @@
 2. Created [blood_reports.py] endpoint to accept PDF/image uploads, save files locally under `uploads/blood_reports/` and create matching database records in PostgreSQL.
 3. Created [patient.py] endpoint to handle patient registration and listing.
 4. Connected all sub-routers to the main API router in [router.py]
-5. The endpoints are not running with the FastAPI, I will fix it tommorrow
+5. The endpoints are not running with the FastAPI
 
 ---
+
+## Day 5: Fixed API Endpoints running issues (7/24/2026)
+
+---
+
+1. Refactored [patient.py] so it fetches every patient from the database and returns them as a list.
+2. The endpoints are running successfully with th FastAPI.
+
+--- 
 
 
