@@ -10,7 +10,7 @@ from typing import List, Optional
 router = APIRouter()
 class PatientCreate(BaseModel):
     first_name: str
-    last_name: stry
+    last_name: str
     email: Optional[str] = None
 class PatientResponse(BaseModel):
     id: uuid.UUID
