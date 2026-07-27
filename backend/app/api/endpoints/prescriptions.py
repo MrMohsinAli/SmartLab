@@ -1,9 +1,10 @@
 import os
 import uuid
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import Prescription, Patient
+from app.services.tasks import process_prescription_task
 
 router = APIRouter()
 UPLOAD_DIR = os.path.join("uploads", "prescriptions")
@@ -11,6 +12,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.post("/upload", status_code=201)
 def upload_prescription(
+    background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     patient_id: str = None,
     db: Session = Depends(get_db)
@@ -48,6 +50,8 @@ def upload_prescription(
     db.add(db_prescription)
     db.commit()
     db.refresh(db_prescription)
+# Enqueue OCR in backgorund
+    background_tasks.add_task(process_prescription_task, db_prescription.id, db)
     return {
         "id": str(db_prescription.id),
         "patient_id": str(db_prescription.patient_id) if db_prescription.patient_id else None,

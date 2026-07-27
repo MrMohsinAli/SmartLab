@@ -1,9 +1,10 @@
 import os
 import uuid
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import BloodReport, Patient
+from app.services.tasks import process_blood_report_task
 
 router = APIRouter()
 UPLOAD_DIR = os.path.join("uploads", "blood_reports")
@@ -11,6 +12,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.post("/upload", status_code=201)
 def upload_blood_report(
+    background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     patient_id: str = None,
     db: Session = Depends(get_db)
@@ -48,6 +50,8 @@ def upload_blood_report(
     db.add(db_report)
     db.commit()
     db.refresh(db_report)
+# Enqueue OCR in backgorund
+    background_tasks.add_task(process_blood_report_task, db_report.id, db)
     return {
         "id": str(db_report.id),
         "patient_id": str(db_report.patient_id) if db_report.patient_id else None,
