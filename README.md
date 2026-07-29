@@ -26,3 +26,13 @@
 
 ---
 
+## Day 3: Structured Biomarker Extraction (7/29/2026)
+
+---
+
+1. Learned about the blood test biomarkers and their normal ranges.
+2. Created `blood_parser.py` that utilizes the gemini structured JSON outputs to extract structured biomarker data from the raw OCR text.
+
+
+---
+
