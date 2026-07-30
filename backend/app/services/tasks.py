@@ -15,15 +15,15 @@ def process_prescription_task(prescription_id: UUID, db: Session):
     try:
         prescription.status = "PROCESSING"
         db.commit()
-# Call OCR transcription service
+# call OCR transcription service
         raw_text = extract_text_from_image(prescription.file_path)
         prescription.raw_text = raw_text
         db.commit()
-    # Call parser to extract structured medications
+    # call parser to extract structured medications
         from app.services.parser import parse_prescription_text
         from app.models import Medication
         medications_data = parse_prescription_text(raw_text)
-        # Save each structured medication to the database
+        # save each structured medication to the database
         for med_data in medications_data:
             db_med = Medication(
                 prescription_id=prescription.id,
@@ -42,7 +42,7 @@ def process_prescription_task(prescription_id: UUID, db: Session):
         db.commit()
 
 def process_blood_report_task(report_id: UUID, db: Session):
-    logger.info(f"Starting blood report OCR task for ID: {report_id}")
+    logger.info(f"Starting blood report processing task for ID: {report_id}")
     report = db.query(BloodReport).filter(BloodReport.id == report_id).first()
     if not report:
         logger.error(f"Blood report with ID {report_id} not found.")
@@ -50,13 +50,33 @@ def process_blood_report_task(report_id: UUID, db: Session):
     try:
         report.status = "PROCESSING"
         db.commit()
-# Call OCR transcription service
+# call OCR transcription service
         raw_text = extract_text_from_image(report.file_path)
         report.raw_text = raw_text
+        db.commit()
+    # call parser to extract structured biomarkers
+        from app.services.blood_parser import parse_blood_report_text
+        from app.services.bio_rules import evaluate_biomarker
+        from app.models import Biomarker          
+        parsed_biomarkers = parse_blood_report_text(raw_text)
+    # evaluate each biomarker and save to database
+        for bm in parsed_biomarkers:
+            eval_result = evaluate_biomarker(bm.name, bm.value, bm.unit)
+            db_bm = Biomarker(
+                blood_report_id=report.id,
+                name=eval_result["name"],
+                value=eval_result["value"],
+                unit=eval_result["unit"],
+                reference_range_min=eval_result["reference_range_min"],
+                reference_range_max=eval_result["reference_range_max"],
+                status=eval_result["status"],
+                educational_tip=eval_result["educational_tip"]
+            )
+            db.add(db_bm)
         report.status = "COMPLETED"
         db.commit()
-        logger.info(f"Successfully completed blood report OCR task for ID: {report_id}")
+        logger.info(f"Successfully completed blood report processing task for ID: {report_id}")
     except Exception as e:
-        logger.exception(f"Failed to process blood report OCR task for ID: {report_id}")
+        logger.exception(f"Failed to process blood report task for ID: {report_id}")
         report.status = "FAILED"
         db.commit()

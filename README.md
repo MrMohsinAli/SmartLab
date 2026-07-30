@@ -35,4 +35,12 @@
 
 
 ---
+## Day 4: Blood-Report Biomarker Rule Engine (7/30/2026)
 
+---
+
+1. Created `bio_rules.py` containing clinical reference thresholds, status evaluation (`NORMAL`, `ABNORMAL`, `CRITICAL`), plus patient-friendly educational tip.
+2. Updated `tasks.py` to run the clinical rule engine on extracted biomarkers in the background and insert the structured records into the `biomarkers` database table.
+3. Verified the blood-report analysis pipeline, and it is running fine.
+
+---
