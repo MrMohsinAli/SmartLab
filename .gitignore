@@ -2,3 +2,7 @@
 __pycache__/
 .env
 backend/uploads/
+node_modules/
+dist/
+.env.local
+*.log
