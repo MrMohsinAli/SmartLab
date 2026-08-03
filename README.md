@@ -1,46 +1,28 @@
 # SmartLab
 
 ---
-## MODULE 2
+## MODULE 3
 ---
 
-## Day 1: Handwriting OCR Transcription Pipeline (7/27/2026)
-
----
-
-1. Added `google-genai` and `pillow` to requirements.txt and installed them.
-2. Created `ocr.py`which uses the Google Gemini gemini-3.5-flash-lite model to transcribe both images and PDFs.
-3. Configured `prescriptions.py`and `blood_reports.py`to trigger transcription in the background immediately upon upload.
-4. Created `tasks.py` which coordinates reading files, sending them to the OCR service, and updating PostgreSQL state transitions (PENDING -> PROCESSING -> COMPLETED / FAILED).
+## Day 1: React & Tailwind Configuration (8/3/2026)
 
 ---
 
-## Day 2: Structured Medication Parser (7/28/2026)
+1. Installed and configured the React development environment using Vite, PostCSS, and Tailwind CSS.
+2. Created a clean, light-themed responsive frontend dashboard using React JSX (`src/App.jsx`).
+
+```text
+frontend/
+├── package.json          # Core package scripts and dev dependencies configuration
+├── tailwind.config.js    # Tailwind CSS layout scanning paths
+├── postcss.config.js     # PostCSS CSS compiling rules
+├── vite.config.js        # Vite dev server and hot-reload setup
+├── index.html            # Entry point for the browser
+└── src/
+    ├── main.jsx          # Entry script connecting HTML container to React App
+    ├── App.jsx           # Core dashboard structure, layout tabs, and metric cards
+    └── index.css         # Base Tailwind CSS rules and light scrollbars
+```
 
 ---
 
-1. Created `parser.py`utilizing the Google gemini structured JSON outputs to extract structured medication data from the raw OCR text.
-2. Updated `tasks.py` to automatically send raw OCR prescription text to the parser and map it to structured medication profiles.
-3. Programmed the pipeline to loop through all parsed medications and save them as individual rows in the `medications` database table.
-4. Tested the integration, but the transcription is not accurate for now.
-
----
-
-## Day 3: Structured Biomarker Extraction (7/29/2026)
-
----
-
-1. Learned about the blood test biomarkers and their normal ranges.
-2. Created `blood_parser.py` that utilizes the gemini structured JSON outputs to extract structured biomarker data from the raw OCR text.
-
-
----
-## Day 4: Blood-Report Biomarker Rule Engine (7/30/2026)
-
----
-
-1. Created `bio_rules.py` containing clinical reference thresholds, status evaluation (`NORMAL`, `ABNORMAL`, `CRITICAL`), plus patient-friendly educational tip.
-2. Updated `tasks.py` to run the clinical rule engine on extracted biomarkers in the background and insert the structured records into the `biomarkers` database table.
-3. Verified the blood-report analysis pipeline, and it is running fine.
-
----
