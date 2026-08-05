@@ -37,3 +37,14 @@ frontend/
 5. Formatted typography for brandname and hardcoded patient information across the interface.
 
 ---
+
+## Day 3: File Upload Functionality (8/5/2026)
+
+---
+
+1. Implemented drag-and-drop file upload functionality.
+2. Integrated file upload with existing dashboard UI components.
+3. Added dropdown card for notifications, which will display list of notifications when clicked and notifications are marked as read and unread.
+4. Added other minor tweaks such as account, notifications are overlapping eachother but fixed that.
+
+---
