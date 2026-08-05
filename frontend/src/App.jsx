@@ -17,16 +17,49 @@ export default function App() {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
   const prescriptionInputRef = useRef(null);
   const bloodReportInputRef = useRef(null);
 
+  const [notifications, setNotifications] = useState([
+    { id: 1, title: 'Prescription Processed', desc: 'Paracetamol 500mg dosage routine extracted successfully.', time: '10m ago', unread: true },
+    { id: 2, title: 'Biomarker Alert', desc: 'Cholesterol level flagged as CRITICAL (245 mg/dL).', time: '1h ago', unread: true },
+    { id: 3, title: 'OCR Engine Ready', desc: 'SmartLab clinical rules evaluation engine activated.', time: '3h ago', unread: false },
+  ]);
+
+  const markNotificationAsRead = (id) => {
+    setNotifications(prev => 
+      prev.map(item => item.id === id ? { ...item, unread: false } : item)
+    );
+  };
+
+  const unreadCount = notifications.filter(n => n.unread).length;
+
   const patientInfo = {
-    name: "mosyy",
+    name: "mohsin",
     id: "#PT-84920",
-    role: "Patient (Uploader)",
+    role: "Patient",
     status: "Active"
   };
+
+  const dietTips = [
+    "Include iron-rich spinach and citrus fruits to boost hemoglobin absorption & natural energy.",
+    "Stay well-hydrated with 8-10 glasses of water daily to support kidney filtration and creatinine balance.",
+    "Incorporate fiber-rich oats, chia seeds, and healthy fats to maintain optimal cholesterol levels.",
+    "Pair complex carbohydrates with lean proteins to prevent sudden blood glucose spikes.",
+    "Eat zinc and vitamin C rich foods (citrus, seeds, bell peppers) to strengthen immune WBC response."
+  ];
+
+  const [currentTipIndex, setCurrentTipIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTipIndex((prevIndex) => (prevIndex + 1) % dietTips.length);
+    }, 10000); // 10 seconds auto-rotation
+
+    return () => clearInterval(timer);
+  }, [dietTips.length]);
 
   const menuItems = [
     { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard },
@@ -82,7 +115,10 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col lg:flex-row font-sans">
+    <div 
+      className="min-h-screen text-gray-900 flex flex-col lg:flex-row font-sans"
+      style={{ backgroundImage: 'linear-gradient(to top, #dfe9f3 0%, white 100%)' }}
+    >
       
       {/* --- DESKTOP SIDEBAR --- */}
       <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 p-6 shrink-0 shadow-sm">
@@ -121,8 +157,26 @@ export default function App() {
           })}
         </nav>
 
-        {/* Sidebar Patient Profile Footer */}
-        <div className="mt-auto pt-6 border-t border-gray-100">
+        {/* Sidebar Patient Profile & Auto-Rotating Daily Diet Tip Card */}
+        <div className="mt-auto pt-6 border-t border-gray-100 space-y-4">
+          
+          {/* Daily Diet & Health Tip Card (Auto-rotates every 10s) */}
+          <div 
+            className="rounded-2xl p-4 text-slate-900 shadow-sm relative overflow-hidden transition-all duration-300 min-h-[95px] flex flex-col justify-between border border-white/60"
+            style={{ backgroundImage: 'linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%)' }}
+          >
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center text-[9px] uppercase tracking-wider font-bold text-slate-800">
+                <span>💡 Daily Health Tip</span>
+                <span className="text-[8px] bg-slate-900/10 text-slate-800 px-1.5 py-0.5 rounded-full font-mono font-bold">{currentTipIndex + 1}/{dietTips.length}</span>
+              </div>
+              <p className="text-xs font-semibold text-slate-900 leading-relaxed transition-opacity duration-300">
+                {dietTips[currentTipIndex]}
+              </p>
+            </div>
+          </div>
+          
+          {/* Patient Profile Footer */}
           <div className="flex items-center gap-3 px-1 py-1">
             <div className="h-9 w-9 rounded-full bg-[#8989ba]/20 text-[#6a699a] flex items-center justify-center font-bold text-xs shrink-0">
               <User size={16} />
@@ -204,6 +258,35 @@ export default function App() {
                 );
               })}
             </nav>
+
+            {/* Mobile Drawer Footer with Daily Health Tip & Patient Profile */}
+            <div className="mt-auto pt-6 border-t border-gray-100 space-y-4">
+              <div 
+                className="rounded-2xl p-4 text-slate-900 shadow-sm relative overflow-hidden transition-all duration-300 min-h-[95px] flex flex-col justify-between border border-white/60"
+                style={{ backgroundImage: 'linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%)' }}
+              >
+                <div className="space-y-1.5">
+                  <div className="flex justify-between items-center text-[9px] uppercase tracking-wider font-bold text-slate-800">
+                    <span>💡 Daily Health Tip</span>
+                    <span className="text-[8px] bg-slate-900/10 text-slate-800 px-1.5 py-0.5 rounded-full font-mono font-bold">{currentTipIndex + 1}/{dietTips.length}</span>
+                  </div>
+                  <p className="text-xs font-semibold text-slate-900 leading-relaxed">
+                    {dietTips[currentTipIndex]}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3 px-1 py-1">
+                <div className="h-9 w-9 rounded-full bg-[#8989ba]/20 text-[#6a699a] flex items-center justify-center font-bold text-xs shrink-0">
+                  <User size={16} />
+                </div>
+                <div className="overflow-hidden">
+                  <p className="text-xs font-bold text-gray-800 truncate">{patientInfo.name}</p>
+                  <p className="text-[10px] text-gray-400 font-medium truncate">ID: {patientInfo.id}</p>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       )}
@@ -212,14 +295,69 @@ export default function App() {
       <main className="flex-1 flex flex-col min-w-0">
         
         <header className="hidden lg:flex justify-end items-center gap-3 px-8 py-4 border-b border-gray-200 bg-white relative">
-          <button className="p-2 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 transition-colors relative" title="Notifications">
-            <Bell size={18} />
-            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-[#8989ba] ring-2 ring-white"></span>
-          </button>
+          
+          {/* Notification Bell with Dropdown */}
+          <div className="relative">
+            <button 
+              onClick={() => {
+                setIsNotificationsOpen(!isNotificationsOpen);
+                if (isAccountOpen) setIsAccountOpen(false);
+              }}
+              className="p-2 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 transition-colors relative cursor-pointer" 
+              title="Notifications"
+            >
+              <Bell size={18} />
+              {unreadCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-[#8989ba] ring-2 ring-white"></span>
+              )}
+            </button>
+
+            {isNotificationsOpen && (
+              <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-2xl shadow-xl p-4 z-50 space-y-3">
+                <div className="flex items-center justify-between pb-2.5 border-b border-gray-100">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-bold text-gray-900 text-sm">Notifications</h3>
+                    <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full ${
+                      unreadCount > 0 ? 'bg-[#8989ba]/15 text-[#6a699a]' : 'bg-gray-100 text-gray-500'
+                    }`}>
+                      {unreadCount > 0 ? `${unreadCount} New` : 'All Read'}
+                    </span>
+                  </div>
+                </div>
+                <div className="space-y-2 max-h-72 overflow-y-auto">
+                  {notifications.map((item) => (
+                    <div 
+                      key={item.id} 
+                      onClick={() => markNotificationAsRead(item.id)}
+                      className={`p-3 rounded-xl border text-xs transition-all duration-200 cursor-pointer ${
+                        item.unread 
+                          ? 'bg-gray-50 border-gray-200 hover:bg-gray-100/80 shadow-2xs' 
+                          : 'bg-gray-50/40 border-gray-100/60 opacity-55 text-gray-500'
+                      }`}
+                    >
+                      <div className="flex justify-between items-start mb-1">
+                        <span className={`font-bold text-xs flex items-center gap-1.5 ${item.unread ? 'text-gray-900' : 'text-gray-500'}`}>
+                          {item.unread && <span className="h-1.5 w-1.5 rounded-full bg-[#8989ba] shrink-0"></span>}
+                          {item.title}
+                        </span>
+                        <span className="text-[10px] text-gray-400 font-medium">{item.time}</span>
+                      </div>
+                      <p className={`text-[11px] leading-relaxed ${item.unread ? 'text-gray-600' : 'text-gray-400'}`}>
+                        {item.desc}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
           
           <div className="relative">
             <button 
-              onClick={() => setIsAccountOpen(!isAccountOpen)}
+              onClick={() => {
+                setIsAccountOpen(!isAccountOpen);
+                if (isNotificationsOpen) setIsNotificationsOpen(false);
+              }}
               className="flex items-center gap-2 px-3.5 py-1.5 border border-gray-200 rounded-xl text-sm text-gray-700 hover:bg-gray-50 font-medium transition-colors cursor-pointer"
             >
               <User size={16} className="text-[#8989ba]" />
@@ -273,6 +411,35 @@ export default function App() {
                   <p className="text-sm text-slate-800 leading-relaxed font-medium max-w-xl">
                     SmartLab automatically converts your handwritten prescriptions and multi-column lab blood reports into digital summaries, flagging critical health alerts instantly.
                   </p>
+                  <div className="flex flex-wrap items-center gap-3 pt-2">
+                    <input 
+                      type="file" 
+                      ref={prescriptionInputRef} 
+                      onChange={handleFileSelect} 
+                      accept=".jpg,.jpeg,.png,image/jpeg,image/png,image/jpg" 
+                      className="hidden" 
+                    />
+                    <input 
+                      type="file" 
+                      ref={bloodReportInputRef} 
+                      onChange={handleFileSelect} 
+                      accept="image/*,.pdf" 
+                      className="hidden" 
+                    />
+                    <button
+                      onClick={() => prescriptionInputRef.current?.click()}
+                      className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-200"
+                    >
+                      <Plus size={16} /> Upload Prescription
+                    </button>
+                    <button
+                      onClick={() => bloodReportInputRef.current?.click()}
+                      style={{ backgroundImage: 'linear-gradient(to top, #dfe9f3 0%, white 100%)' }}
+                      className="px-5 py-2.5 rounded-xl text-slate-800 font-semibold text-sm flex items-center gap-2 border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 hover:opacity-90"
+                    >
+                      <Plus size={16} /> Upload Blood Report
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -322,6 +489,48 @@ export default function App() {
 
               </div>
 
+              {/* Drag and Drop Zone Container */}
+              <div 
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`border rounded-2xl p-6 bg-white shadow-sm transition-all duration-200 ${
+                  isDragging ? 'border-[#8989ba] bg-[#8989ba]/10 ring-4 ring-[#8989ba]/20' : 'border-gray-200'
+                }`}
+              >
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-base font-bold text-gray-900 font-heading">
+                        Instant Document Upload Zone
+                      </h3>
+                      <p className="text-xs text-gray-500">
+                        Drag & drop prescription notes or lab blood reports for automatic OCR & rule evaluation
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-[#8989ba] transition-colors relative cursor-pointer group bg-gray-50/40 hover:bg-[#8989ba]/5">
+                    <input 
+                      type="file" 
+                      multiple 
+                      onChange={handleFileSelect} 
+                      className="absolute inset-0 opacity-0 cursor-pointer z-10" 
+                    />
+                    <div 
+                      className="h-12 w-12 rounded-full text-white flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform shadow-xs"
+                      style={{ backgroundImage: 'linear-gradient(to top, #a7a6cb 0%, #8989ba 52%, #8989ba 100%)' }}
+                    >
+                      <Plus size={24} />
+                    </div>
+                    <p className="text-sm font-bold text-gray-800 group-hover:text-[#8989ba] transition-colors">
+                      Drag & drop medical files here, or <span className="text-[#8989ba] underline">browse</span>
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">Supports PNG, JPG images and PDF report documents</p>
+                  </div>
+                </div>
+              </div>
+
               {/* Processing Queue List */}
               {uploadedFiles.length > 0 && (
                 <div className="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-4">
@@ -363,7 +572,7 @@ export default function App() {
                 <div className="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm flex flex-col justify-between space-y-4">
                   <div className="flex justify-between items-center">
                     <div>
-                      <h4 className="text-sm font-bold text-gray-900">Recent Prescriptions</h4>
+                      <h4 className="text-base font-bold text-gray-900 font-heading">Recent Prescriptions</h4>
                       <p className="text-xs text-gray-500">Extracted dosage routines</p>
                     </div>
                     <button 
@@ -377,7 +586,7 @@ export default function App() {
                     {mockPrescriptions.slice(0, 2).map((med) => (
                       <div key={med.id} className="p-3.5 rounded-xl bg-gray-50 border border-gray-100 flex justify-between items-center text-xs">
                         <div>
-                          <p className="font-bold text-gray-800 text-sm">{med.drugName} <span className="text-xs font-normal text-gray-500">({med.dosage})</span></p>
+                          <p className="font-semibold text-gray-800 text-[13px]">{med.drugName} <span className="text-xs font-normal text-gray-500">({med.dosage})</span></p>
                           <p className="text-gray-500 mt-0.5">{med.interval}</p>
                         </div>
                         <span className="px-2.5 py-1 rounded-lg bg-white text-gray-700 border border-gray-200 font-medium text-xs shadow-2xs">
@@ -392,7 +601,7 @@ export default function App() {
                 <div className="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm flex flex-col justify-between space-y-4">
                   <div className="flex justify-between items-center">
                     <div>
-                      <h4 className="text-sm font-bold text-gray-900">Biomarker Health Summary</h4>
+                      <h4 className="text-base font-bold text-gray-900 font-heading">Biomarker Health Summary</h4>
                       <p className="text-xs text-gray-500">Evaluated clinical reference ranges</p>
                     </div>
                     <button 
@@ -406,7 +615,7 @@ export default function App() {
                     {mockBiomarkers.slice(0, 2).map((bio) => (
                       <div key={bio.id} className="p-3.5 rounded-xl bg-gray-50 border border-gray-100 flex justify-between items-center text-xs">
                         <div>
-                          <p className="font-bold text-gray-800 text-sm">{bio.name}</p>
+                          <p className="font-semibold text-gray-800 text-[13px]">{bio.name}</p>
                           <p className="text-gray-500 mt-0.5">{bio.value} (Ref: {bio.range})</p>
                         </div>
                         <span className={`px-2.5 py-0.5 text-xs font-bold rounded-full border ${
@@ -433,7 +642,37 @@ export default function App() {
               <div className="flex justify-between items-center">
                 <div>
                   <h2 className="text-xl font-bold text-gray-900 font-heading">Digitized Prescriptions</h2>
-                  <p className="text-xs text-gray-500">View your handwritten prescription dosage routines</p>
+                  <p className="text-xs text-gray-500">View and upload your handwritten prescription notes</p>
+                </div>
+              </div>
+
+              {/* Upload Dropzone */}
+              <div 
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`border rounded-2xl p-5 bg-white shadow-sm transition-all duration-200 ${
+                  isDragging ? 'border-[#8989ba] bg-[#8989ba]/10 ring-4 ring-[#8989ba]/20' : 'border-gray-200'
+                }`}
+              >
+                <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-[#8989ba] transition-colors relative cursor-pointer group bg-gray-50/40 hover:bg-[#8989ba]/5">
+                  <input 
+                    type="file" 
+                    multiple 
+                    onChange={handleFileSelect} 
+                    accept=".jpg,.jpeg,.png,image/jpeg,image/png,image/jpg"
+                    className="absolute inset-0 opacity-0 cursor-pointer z-10" 
+                  />
+                  <div 
+                    className="h-10 w-10 rounded-full text-white flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform shadow-xs"
+                    style={{ backgroundImage: 'linear-gradient(to top, #a7a6cb 0%, #8989ba 52%, #8989ba 100%)' }}
+                  >
+                    <Plus size={20} />
+                  </div>
+                  <p className="text-sm font-bold text-gray-800 group-hover:text-[#8989ba] transition-colors">
+                    Upload Prescription Image or <span className="text-[#8989ba] underline">browse</span>
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">Supports JPG, JPEG, and PNG image files</p>
                 </div>
               </div>
 
@@ -470,6 +709,36 @@ export default function App() {
                 <div>
                   <h2 className="text-xl font-bold text-gray-900 font-heading">Blood Biomarkers</h2>
                   <p className="text-xs text-gray-500">Analyze reference ranges and view clinical alert tags</p>
+                </div>
+              </div>
+
+              {/* Upload Dropzone */}
+              <div 
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`border rounded-2xl p-5 bg-white shadow-sm transition-all duration-200 ${
+                  isDragging ? 'border-[#8989ba] bg-[#8989ba]/10 ring-4 ring-[#8989ba]/20' : 'border-gray-200'
+                }`}
+              >
+                <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-[#8989ba] transition-colors relative cursor-pointer group bg-gray-50/40 hover:bg-[#8989ba]/5">
+                  <input 
+                    type="file" 
+                    multiple 
+                    onChange={handleFileSelect} 
+                    accept="image/*,.pdf"
+                    className="absolute inset-0 opacity-0 cursor-pointer z-10" 
+                  />
+                  <div 
+                    className="h-10 w-10 rounded-full text-white flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform shadow-xs"
+                    style={{ backgroundImage: 'linear-gradient(to top, #a7a6cb 0%, #8989ba 52%, #8989ba 100%)' }}
+                  >
+                    <Plus size={20} />
+                  </div>
+                  <p className="text-sm font-bold text-gray-800 group-hover:text-[#8989ba] transition-colors">
+                    Upload Lab Blood Report or <span className="text-[#8989ba] underline">browse</span>
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">Supports multi-column lab blood report PDFs and images</p>
                 </div>
               </div>
 
