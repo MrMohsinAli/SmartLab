@@ -48,3 +48,10 @@ frontend/
 4. Added other minor tweaks such as account, notifications are overlapping eachother but fixed that.
 
 ---
+
+## Day 4: Daily Health Tip (8/6/2026)
+
+1. Implemented daily health tip card that will display daily health tips.
+2. For now it is hardcoded, later it will fetch from the database.
+
+---
