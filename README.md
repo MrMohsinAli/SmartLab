@@ -1,7 +1,9 @@
 # SmartLab
 
 ---
+
 ## MODULE 3
+
 ---
 
 ## Day 1: React & Tailwind Configuration (8/3/2026)
@@ -50,6 +52,8 @@ frontend/
 ---
 
 ## Day 4: Daily Health Tip (8/6/2026)
+
+---
 
 1. Implemented daily health tip card that will display daily health tips.
 2. For now it is hardcoded, later it will fetch from the database.
