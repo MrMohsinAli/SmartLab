@@ -2,16 +2,18 @@
 
 ---
 
-## MODULE 3
+## MODULE 4
 
 ---
 
-## Day 1: React & Tailwind Configuration (8/3/2026)
+## Day 1: Clinical Biomarker Markers (8/10/2026)
 
 ---
 
-1. Installed and configured the React development environment using Vite, PostCSS, and Tailwind CSS.
-2. Created a clean, light-themed responsive frontend dashboard using React JSX `src/App.jsx`.
+1. Implemented visual status markers for clinical biomarker evaluation.
+2. Created Green status badges and markers (`NORMAL`) for healthy blood parameters.
+3. Created Yellow/Amber status badges and markers (`ABNORMAL`) for out-of-range clinical values.
+4. Created dynamic pulsing Red card borders, glowing danger badges, and animated ping markers (`CRITICAL`) for critical danger alerts.
 
 ```text
 frontend/
@@ -22,40 +24,22 @@ frontend/
 ├── index.html            # Entry point for the browser
 └── src/
     ├── main.jsx          # Entry script connecting HTML container to React App
-    ├── App.jsx           # Core dashboard structure, layout tabs, and metric cards
-    └── index.css         # Base Tailwind CSS rules and light scrollbars
+    ├── App.jsx           # Core dashboard structure and modular page routing
+    ├── index.css         # Base Tailwind CSS rules and custom scrollbars 
+    ├── components/
+    │   ├── DailyHealthTip.jsx        
+    │   ├── NotificationsDropdown.jsx 
+    │   ├── PatientDropdown.jsx       
+    │   ├── Header.jsx                
+    │   ├── Sidebar.jsx               
+    │   ├── MobileDrawer.jsx   
+    │   └── biomarkerStyles.jsx        
+    ├── pages/
+    │   ├── DashboardPage.jsx         
+    │   ├── PrescriptionsPage.jsx     
+    │   └── BloodReportsPage.jsx    
+    ├── data/
+    │   └── mockData.js   
 ```
-
----
-
-## Day 2: Designed Clean, Unique and Structured UI (8/4/2026)
-
----
-
-1. Designed the web interface to align with existed medical applications while maintaining a unique,custom look.
-2. Sourced aesthetic linear-gradients from **webgradients.com** for the hero banner, active navigation tabs, and widget cards.
-3. Created clean, structured web Prescription data tables.
-4. Designed responsive clinical biomarker data cards.
-5. Formatted typography for brandname and hardcoded patient information across the interface.
-
----
-
-## Day 3: File Upload Functionality (8/5/2026)
-
----
-
-1. Implemented drag-and-drop file upload functionality.
-2. Integrated file upload with existing dashboard UI components.
-3. Added dropdown card for notifications, which will display list of notifications when clicked and notifications are marked as read and unread.
-4. Added other minor tweaks such as account, notifications are overlapping eachother but fixed that.
-
----
-
-## Day 4: Daily Health Tip (8/6/2026)
-
----
-
-1. Implemented daily health tip card that will display daily health tips.
-2. For now it is hardcoded, later it will fetch from the database.
 
 ---
