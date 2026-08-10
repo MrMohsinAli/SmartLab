@@ -6,7 +6,7 @@
 
 ---
 
-## Day 1: Clinical Biomarker Status Markers (8/10/2026)
+## Day 1: Clinical Biomarker Markers (8/10/2026)
 
 ---
 
