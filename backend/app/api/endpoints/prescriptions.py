@@ -22,7 +22,7 @@ def upload_prescription(
     if file_ext not in allowed_extensions:
         raise HTTPException(
             status_code=400,
-            detail="Only image filesare allowed."
+            detail="Only image files are allowed."
         )
     patient_uuid = None
     if patient_id:
@@ -34,13 +34,16 @@ def upload_prescription(
         patient = db.query(Patient).filter(Patient.id == patient_uuid).first()
         if not patient:
             raise HTTPException(status_code=404, detail="Patient not found.")
-# Create unique filename
+            
+    # Create unique filename
     unique_filename = f"{uuid.uuid4()}{file_ext}"
     file_path = os.path.join(UPLOAD_DIR, unique_filename)
-# Save file locally
+    
+    # Save file locally
     with open(file_path, "wb") as buffer:
         buffer.write(file.file.read())
-# Create db record
+        
+    # Create db record
     db_prescription = Prescription(
         patient_id=patient_uuid,
         file_name=file.filename,
@@ -50,7 +53,8 @@ def upload_prescription(
     db.add(db_prescription)
     db.commit()
     db.refresh(db_prescription)
-# Enqueue OCR in backgorund
+    
+    # Enqueue OCR in background
     background_tasks.add_task(process_prescription_task, db_prescription.id, db)
     return {
         "id": str(db_prescription.id),
@@ -58,5 +62,62 @@ def upload_prescription(
         "file_name": db_prescription.file_name,
         "file_path": db_prescription.file_path,
         "status": db_prescription.status,
-        "uploaded_at": db_prescription.uploaded_at
+        "uploaded_at": db_prescription.uploaded_at.isoformat() if db_prescription.uploaded_at else None
+    }
+
+@router.get("/")
+def list_prescriptions(db: Session = Depends(get_db)):
+    prescriptions = db.query(Prescription).order_by(Prescription.uploaded_at.desc()).all()
+    result = []
+    for p in prescriptions:
+        meds = [
+            {
+                "id": str(m.id),
+                "drug_name": m.drug_name,
+                "dosage": m.dosage,
+                "interval": m.interval,
+                "duration": m.duration
+            }
+            for m in p.medications
+        ]
+        result.append({
+            "id": str(p.id),
+            "patient_id": str(p.patient_id) if p.patient_id else None,
+            "file_name": p.file_name,
+            "status": p.status,
+            "raw_text": p.raw_text,
+            "uploaded_at": p.uploaded_at.isoformat() if p.uploaded_at else None,
+            "medications": meds
+        })
+    return result
+
+@router.get("/{id}")
+def get_prescription(id: str, db: Session = Depends(get_db)):
+    try:
+        prescription_uuid = uuid.UUID(id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid prescription id format.")
+    
+    p = db.query(Prescription).filter(Prescription.id == prescription_uuid).first()
+    if not p:
+        raise HTTPException(status_code=404, detail="Prescription not found.")
+    
+    meds = [
+        {
+            "id": str(m.id),
+            "drug_name": m.drug_name,
+            "dosage": m.dosage,
+            "interval": m.interval,
+            "duration": m.duration
+        }
+        for m in p.medications
+    ]
+    return {
+        "id": str(p.id),
+        "patient_id": str(p.patient_id) if p.patient_id else None,
+        "file_name": p.file_name,
+        "status": p.status,
+        "raw_text": p.raw_text,
+        "uploaded_at": p.uploaded_at.isoformat() if p.uploaded_at else None,
+        "medications": meds
     }

@@ -43,3 +43,12 @@ frontend/
 ```
 
 ---
+
+## Day 2: FastAPI Backend API & CORS Integration (8/11/2026)
+
+---
+
+1. Enabled `CORSMiddleware` in `backend/app/main.py` allowing frontend cross-origin requests.
+2. Modified endpoint files to add new endpoints to retrieve uploaded prescriptions,labreports and parsed medication lists, evaluated biomarker reference values.
+
+---
