@@ -34,13 +34,16 @@ def upload_blood_report(
         patient = db.query(Patient).filter(Patient.id == patient_uuid).first()
         if not patient:
             raise HTTPException(status_code=404, detail="Patient not found.")
-# Create unique filename
+            
+    # Create unique filename
     unique_filename = f"{uuid.uuid4()}{file_ext}"
     file_path = os.path.join(UPLOAD_DIR, unique_filename)
-# Save file locally
+    
+    # Save file locally
     with open(file_path, "wb") as buffer:
         buffer.write(file.file.read())
-# Create db record
+        
+    # Create db record
     db_report = BloodReport(
         patient_id=patient_uuid,
         file_name=file.filename,
@@ -50,7 +53,8 @@ def upload_blood_report(
     db.add(db_report)
     db.commit()
     db.refresh(db_report)
-# Enqueue OCR in backgorund
+    
+    # Enqueue OCR in background
     background_tasks.add_task(process_blood_report_task, db_report.id, db)
     return {
         "id": str(db_report.id),
@@ -58,5 +62,70 @@ def upload_blood_report(
         "file_name": db_report.file_name,
         "file_path": db_report.file_path,
         "status": db_report.status,
-        "uploaded_at": db_report.uploaded_at
+        "uploaded_at": db_report.uploaded_at.isoformat() if db_report.uploaded_at else None
+    }
+
+@router.get("/")
+def list_blood_reports(db: Session = Depends(get_db)):
+    reports = db.query(BloodReport).order_by(BloodReport.uploaded_at.desc()).all()
+    result = []
+    for r in reports:
+        bms = [
+            {
+                "id": str(b.id),
+                "name": b.name,
+                "value": b.value,
+                "unit": b.unit,
+                "reference_range": f"{b.reference_range_min} - {b.reference_range_max}" if b.reference_range_min is not None and b.reference_range_max is not None else "",
+                "reference_range_min": b.reference_range_min,
+                "reference_range_max": b.reference_range_max,
+                "status": b.status,
+                "educational_tip": b.educational_tip
+            }
+            for b in r.biomarkers
+        ]
+        result.append({
+            "id": str(r.id),
+            "patient_id": str(r.patient_id) if r.patient_id else None,
+            "file_name": r.file_name,
+            "status": r.status,
+            "raw_text": r.raw_text,
+            "uploaded_at": r.uploaded_at.isoformat() if r.uploaded_at else None,
+            "biomarkers": bms
+        })
+    return result
+
+@router.get("/{id}")
+def get_blood_report(id: str, db: Session = Depends(get_db)):
+    try:
+        report_uuid = uuid.UUID(id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid blood report id format.")
+    
+    r = db.query(BloodReport).filter(BloodReport.id == report_uuid).first()
+    if not r:
+        raise HTTPException(status_code=404, detail="Blood report not found.")
+    
+    bms = [
+        {
+            "id": str(b.id),
+            "name": b.name,
+            "value": b.value,
+            "unit": b.unit,
+            "reference_range": f"{b.reference_range_min} - {b.reference_range_max}" if b.reference_range_min is not None and b.reference_range_max is not None else "",
+            "reference_range_min": b.reference_range_min,
+            "reference_range_max": b.reference_range_max,
+            "status": b.status,
+            "educational_tip": b.educational_tip
+        }
+        for b in r.biomarkers
+    ]
+    return {
+        "id": str(r.id),
+        "patient_id": str(r.patient_id) if r.patient_id else None,
+        "file_name": r.file_name,
+        "status": r.status,
+        "raw_text": r.raw_text,
+        "uploaded_at": r.uploaded_at.isoformat() if r.uploaded_at else None,
+        "biomarkers": bms
     }
