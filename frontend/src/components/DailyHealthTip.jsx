@@ -12,6 +12,10 @@ export default function DailyHealthTip() {
     return () => clearInterval(timer);
   }, []);
 
+  const currentItem = dietTips[currentTipIndex];
+  const tipText = typeof currentItem === 'string' ? currentItem : currentItem?.tip;
+  const categoryText = currentItem?.category ? `💡 ${currentItem.category}` : '💡 Daily Health Tip';
+
   return (
     <div 
       className="rounded-2xl p-4 text-slate-900 shadow-sm relative overflow-hidden transition-all duration-300 min-h-[95px] flex flex-col justify-between border border-white/60"
@@ -19,13 +23,13 @@ export default function DailyHealthTip() {
     >
       <div className="space-y-1.5">
         <div className="flex justify-between items-center text-[9px] uppercase tracking-wider font-bold text-slate-800">
-          <span>💡 Daily Health Tip</span>
-          <span className="text-[8px] bg-slate-900/10 text-slate-800 px-1.5 py-0.5 rounded-full font-mono font-bold">
+          <span className="truncate pr-2">{categoryText}</span>
+          <span className="text-[8px] bg-slate-900/10 text-slate-800 px-1.5 py-0.5 rounded-full font-mono font-bold shrink-0">
             {currentTipIndex + 1}/{dietTips.length}
           </span>
         </div>
         <p className="text-xs font-semibold text-slate-900 leading-relaxed transition-opacity duration-300">
-          {dietTips[currentTipIndex]}
+          {tipText}
         </p>
       </div>
     </div>
