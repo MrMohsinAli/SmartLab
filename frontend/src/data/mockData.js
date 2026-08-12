@@ -1,28 +1,51 @@
 export const patientInfo = {
-  name: "mohsin",
-  id: "#PT-84920",
+  name: "Mohsin Ali",
+  id: "PAT-8842",
   role: "Patient",
-  status: "Active"
+  status: "Active Portal",
 };
 
 export const dietTips = [
-  "Include iron-rich spinach and citrus fruits to boost hemoglobin absorption & natural energy.",
-  "Stay well-hydrated with 8-10 glasses of water daily to support kidney filtration and creatinine balance.",
-  "Incorporate fiber-rich oats, chia seeds, and healthy fats to maintain optimal cholesterol levels.",
-  "Pair complex carbohydrates with lean proteins to prevent sudden blood glucose spikes.",
-  "Eat zinc and vitamin C rich foods (citrus, seeds, bell peppers) to strengthen immune WBC response."
+  {
+    category: "Cardiovascular Health",
+    tip: "Include Omega-3 rich foods like walnut seeds and flaxseed meal to help maintain healthy cholesterol lipid balance.",
+  },
+  {
+    category: "Blood Sugar Control",
+    tip: "Combine complex carbohydrates with lean protein and soluble fiber to prevent post-meal glycemic spikes.",
+  },
+  {
+    category: "Hydration & Metabolism",
+    tip: "Drink 2.5 to 3 liters of water daily to support optimal kidney filtration and electrolyte transport.",
+  },
+  {
+    category: "Liver Function",
+    tip: "Cruciferous vegetables like broccoli and Brussels sprouts contain sulforaphane, supporting natural Phase II liver detox.",
+  },
+  {
+    category: "Iron Absorption",
+    tip: "Pair plant-based iron sources (spinach, lentils) with Vitamin C rich citrus fruits to increase non-heme iron uptake.",
+  },
+  {
+    category: "Joint & Inflammation",
+    tip: "Consume anti-inflammatory turmeric curcumin paired with black pepper to support cartilage health and reduce joint stiffness.",
+  },
+  {
+    category: "Gut Microbiome",
+    tip: "Integrate fermented foods like kefir, kimchi, and Greek yogurt to nourish beneficial gut microbiome bacteria.",
+  },
+  {
+    category: "Bone Density",
+    tip: "Ensure adequate Vitamin D3 intake alongside Calcium from leafy greens and fortified dairy to optimize bone mineral density.",
+  },
+  {
+    category: "Thyroid Support",
+    tip: "Include iodine-rich sea vegetables and Brazil nuts (selenium source) to support optimal T3 and T4 thyroid hormone synthesis.",
+  },
+  {
+    category: "Cellular Recovery",
+    tip: "Prioritize complete amino acid proteins after exercise to accelerate muscle tissue repair and cellular recovery.",
+  },
 ];
 
-export const mockPrescriptions = [
-  { id: 1, drugName: 'Paracetamol', dosage: '500mg', interval: 'Every 8 hours', duration: '7 days', doctor: 'Dr. Saad Shahzad' },
-  { id: 2, drugName: 'Ibuprofen', dosage: '400mg', interval: 'Twice daily (after meals)', duration: '5 days', doctor: 'Dr. Umair Dawood' },
-  { id: 3, drugName: 'Aspirin', dosage: '20mg', interval: 'Once daily (at bedtime)', duration: '30 days', doctor: 'Dr. Usman Danish' },
-];
-
-export const mockBiomarkers = [
-  { id: 1, name: 'Hemoglobin', value: '14.2 g/dL', range: '12.0 - 17.5 g/dL', status: 'NORMAL', tip: 'Your level is within the standard reference range.' },
-  { id: 2, name: 'Fasting Blood Glucose / Blood Sugar', value: '110.0 mg/dL', range: '70.0 - 100.0 mg/dL', status: 'ABNORMAL', tip: 'Your blood sugar level is elevated (prediabetes range). Focus on low-glycemic foods.' },
-  { id: 3, name: 'Cholesterol', value: '245.0 mg/dL', range: '0.0 - 200.0 mg/dL', status: 'CRITICAL', tip: 'Your cholesterol level is critically high (>= 240 mg/dL), increasing cardiovascular risk.' },
-  { id: 4, name: 'Creatinine', value: '0.9 mg/dL', range: '0.6 - 1.2 mg/dL', status: 'NORMAL', tip: 'Your level is within the standard reference range.' },
-  { id: 5, name: 'WBC Count', value: '12.5 x10³/µL', range: '4.0 - 11.0 x10³/µL', status: 'ABNORMAL', tip: 'Your White Blood Cell count is elevated, indicating an active infection response.' },
-];
+export const mockDietTips = dietTips;

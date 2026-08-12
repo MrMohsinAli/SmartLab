@@ -52,3 +52,13 @@ frontend/
 2. Modified endpoint files to add new endpoints to retrieve uploaded prescriptions,labreports and parsed medication lists, evaluated biomarker reference values.
 
 ---
+
+## Day 3: Full API Integration & Pure Backend State (8/12/2026)
+
+---
+
+1. Created `api.js` to manage all frontend communication with FastAPI endpoints.
+2. Connected React dropzones, prescription tables, and blood report grid views directly to live FastAPI services.
+3. Removed hardcoded mockData arrays, but the daily health tips are still hardcoded.
+
+---

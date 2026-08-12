@@ -1,14 +1,17 @@
 import React from 'react';
-import { Plus } from 'lucide-react';
-import { mockPrescriptions } from '../data/mockData';
+import { Plus, Loader2, Inbox } from 'lucide-react';
 
 export default function PrescriptionsPage({ 
   handleDragOver, 
   handleDragLeave, 
   handleDrop, 
   handleFileSelect, 
-  isDragging 
+  isDragging,
+  prescriptions = [],
+  isUploading = false
 }) {
+  const displayPrescriptions = prescriptions || [];
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -39,39 +42,61 @@ export default function PrescriptionsPage({
             className="h-10 w-10 rounded-full text-white flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform shadow-xs"
             style={{ backgroundImage: 'linear-gradient(to top, #a7a6cb 0%, #8989ba 52%, #8989ba 100%)' }}
           >
-            <Plus size={20} />
+            {isUploading ? <Loader2 size={20} className="animate-spin" /> : <Plus size={20} />}
           </div>
           <p className="text-sm font-bold text-gray-800 group-hover:text-[#8989ba] transition-colors">
-            Upload Prescription Image or <span className="text-[#8989ba] underline">browse</span>
+            {isUploading ? "Uploading & Extracting Prescription..." : "Upload Handwritten Prescription Image or browse"}
           </p>
-          <p className="text-xs text-gray-400 mt-1">Supports JPG, JPEG, and PNG image files</p>
+          <p className="text-xs text-gray-400 mt-1">Supports PNG, JPG, and JPEG images</p>
         </div>
       </div>
 
-      {/* Prescriptions Data Table */}
-      <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Drug Name</th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Dosage</th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Interval</th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Duration</th>
-              <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Prescribed By</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {mockPrescriptions.map((row) => (
-              <tr key={row.id} className="hover:bg-gray-50/50 transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">{row.drugName}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-medium">{row.dosage}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{row.interval}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{row.duration}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 italic">{row.doctor}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* Prescriptions Table */}
+      <div className="border border-gray-200 rounded-2xl bg-white shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+          <h3 className="font-bold text-gray-900 text-sm">Parsed Medication Routines</h3>
+          <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#8989ba]/15 text-[#6a699a]">
+            {displayPrescriptions.length} Records
+          </span>
+        </div>
+        {displayPrescriptions.length === 0 ? (
+          <div className="py-12 text-center bg-white flex flex-col items-center justify-center space-y-2">
+            <div className="p-3.5 rounded-full bg-gray-50 text-gray-400 border border-gray-100 mb-1">
+              <Inbox size={28} />
+            </div>
+            <p className="text-sm font-bold text-gray-800">No Prescriptions Digitized Yet</p>
+            <p className="text-xs text-gray-400 max-w-sm">
+              Upload a prescription photo above to let SmartLab automatically extract drug names, dosages, and interval routines.
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-gray-50/70 text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                <tr>
+                  <th className="px-6 py-3.5 font-bold">Medication Name</th>
+                  <th className="px-6 py-3.5 font-bold">Dosage</th>
+                  <th className="px-6 py-3.5 font-bold">Frequency Interval</th>
+                  <th className="px-6 py-3.5 font-bold">Treatment Duration</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 font-medium text-gray-700">
+                {displayPrescriptions.map((med, idx) => (
+                  <tr key={med.id || idx} className="hover:bg-gray-50/80 transition-colors">
+                    <td className="px-6 py-4 font-bold text-gray-900">{med.drugName}</td>
+                    <td className="px-6 py-4">{med.dosage}</td>
+                    <td className="px-6 py-4">
+                      <span className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-semibold">
+                        {med.interval}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-gray-500">{med.duration}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
