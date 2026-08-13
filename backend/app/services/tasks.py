@@ -1,3 +1,4 @@
+import re
 import logging
 from uuid import UUID
 from sqlalchemy.orm import Session
@@ -5,6 +6,22 @@ from app.models import Prescription, BloodReport
 from app.services.ocr import extract_text_from_image
 
 logger = logging.getLogger("smartlab.tasks")
+
+def extract_patient_name_from_text(raw_text: str):
+    if not raw_text:
+        return None
+    patterns = [
+        r"Patient\s*Name\s*[:\-]\s*([A-Za-z\s]+)",
+        r"Patient\s*[:\-]\s*([A-Za-z\s]+)",
+        r"Name\s*[:\-]\s*([A-Za-z\s]+)",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, raw_text, re.IGNORECASE)
+        if match:
+            extracted = match.group(1).strip().split("\n")[0].strip()
+            if len(extracted) > 2 and len(extracted) < 50:
+                return extracted
+    return None
 
 def process_prescription_task(prescription_id: UUID, db: Session):
     logger.info(f"Starting prescription processing task for ID: {prescription_id}")
@@ -15,15 +32,19 @@ def process_prescription_task(prescription_id: UUID, db: Session):
     try:
         prescription.status = "PROCESSING"
         db.commit()
-# call OCR transcription service
+        
+        # Call OCR transcription service
         raw_text = extract_text_from_image(prescription.file_path)
         prescription.raw_text = raw_text
+        prescription.detected_patient_name = extract_patient_name_from_text(raw_text)
         db.commit()
-    # call parser to extract structured medications
+
+        # Call parser to extract structured medications
         from app.services.parser import parse_prescription_text
         from app.models import Medication
         medications_data = parse_prescription_text(raw_text)
-        # save each structured medication to the database
+        
+        # Save each structured medication to database
         for med_data in medications_data:
             db_med = Medication(
                 prescription_id=prescription.id,
@@ -50,16 +71,20 @@ def process_blood_report_task(report_id: UUID, db: Session):
     try:
         report.status = "PROCESSING"
         db.commit()
-# call OCR transcription service
+        
+        # Call OCR transcription service
         raw_text = extract_text_from_image(report.file_path)
         report.raw_text = raw_text
+        report.detected_patient_name = extract_patient_name_from_text(raw_text)
         db.commit()
-    # call parser to extract structured biomarkers
+
+        # Call parser to extract structured biomarkers
         from app.services.blood_parser import parse_blood_report_text
         from app.services.bio_rules import evaluate_biomarker
         from app.models import Biomarker          
         parsed_biomarkers = parse_blood_report_text(raw_text)
-    # evaluate each biomarker and save to database
+        
+        # Evaluate each biomarker and save to database
         for bm in parsed_biomarkers:
             eval_result = evaluate_biomarker(bm.name, bm.value, bm.unit)
             db_bm = Biomarker(
@@ -75,7 +100,7 @@ def process_blood_report_task(report_id: UUID, db: Session):
             db.add(db_bm)
         report.status = "COMPLETED"
         db.commit()
-        logger.info(f"Successfully completed blood report processing task for ID: {report_id}")
+        logger.info(f"Successfully completed blood report task for ID: {report_id}")
     except Exception as e:
         logger.exception(f"Failed to process blood report task for ID: {report_id}")
         report.status = "FAILED"

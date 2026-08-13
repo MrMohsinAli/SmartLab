@@ -30,7 +30,7 @@ export default function NotificationsDropdown({ isOpen, onToggle }) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-2xl shadow-xl p-4 z-50 space-y-3">
+        <div className="fixed left-4 right-4 top-16 sm:absolute sm:left-auto sm:right-0 sm:top-auto mt-2 sm:w-80 bg-white border border-gray-200 rounded-2xl shadow-xl p-4 z-50 space-y-3">
           <div className="flex items-center justify-between pb-2.5 border-b border-gray-100">
             <div className="flex items-center gap-2">
               <h3 className="font-bold text-gray-900 text-sm">Notifications</h3>

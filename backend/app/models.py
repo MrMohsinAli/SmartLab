@@ -27,6 +27,7 @@ class Prescription(Base):
     file_path = Column(String, nullable=False)
     status = Column(String, nullable=False, default="PENDING")  # "PENDING","PROCESSING","COMPLETED","FAILED"
     raw_text = Column(Text, nullable=True)
+    detected_patient_name = Column(String, nullable=True)
     uploaded_at = Column(DateTime(timezone=True), server_default=func.now())
 
     patient = relationship("Patient", back_populates="prescriptions")
@@ -55,6 +56,7 @@ class BloodReport(Base):
     file_path = Column(String, nullable=False)
     status = Column(String, nullable=False, default="PENDING")  # "PENDING","PROCESSING","COMPLETED","FAILED"
     raw_text = Column(Text, nullable=True)
+    detected_patient_name = Column(String, nullable=True)
     uploaded_at = Column(DateTime(timezone=True), server_default=func.now())
 
     patient = relationship("Patient", back_populates="blood_reports")

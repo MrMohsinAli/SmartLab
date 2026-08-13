@@ -17,7 +17,7 @@ def upload_blood_report(
     patient_id: str = None,
     db: Session = Depends(get_db)
 ):
-    allowed_extensions = {".jpg",".jpeg",".png",".pdf"}
+    allowed_extensions = {".jpg", ".jpeg", ".png", ".pdf"}
     file_ext = os.path.splitext(file.filename)[1].lower()
     if file_ext not in allowed_extensions:
         raise HTTPException(
@@ -62,6 +62,7 @@ def upload_blood_report(
         "file_name": db_report.file_name,
         "file_path": db_report.file_path,
         "status": db_report.status,
+        "detected_patient_name": db_report.detected_patient_name,
         "uploaded_at": db_report.uploaded_at.isoformat() if db_report.uploaded_at else None
     }
 
@@ -90,6 +91,7 @@ def list_blood_reports(db: Session = Depends(get_db)):
             "file_name": r.file_name,
             "status": r.status,
             "raw_text": r.raw_text,
+            "detected_patient_name": r.detected_patient_name,
             "uploaded_at": r.uploaded_at.isoformat() if r.uploaded_at else None,
             "biomarkers": bms
         })
@@ -126,6 +128,7 @@ def get_blood_report(id: str, db: Session = Depends(get_db)):
         "file_name": r.file_name,
         "status": r.status,
         "raw_text": r.raw_text,
+        "detected_patient_name": r.detected_patient_name,
         "uploaded_at": r.uploaded_at.isoformat() if r.uploaded_at else None,
         "biomarkers": bms
     }

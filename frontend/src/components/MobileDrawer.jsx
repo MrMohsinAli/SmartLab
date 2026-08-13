@@ -1,7 +1,6 @@
 import React from "react";
 import { X, User } from "lucide-react";
 import DailyHealthTip from "../components/DailyHealthTip";
-import { patientInfo } from "../data/mockData";
 
 export default function MobileDrawer({
   isOpen,
@@ -9,17 +8,21 @@ export default function MobileDrawer({
   activeTab,
   setActiveTab,
   menuItems,
+  activePatient,
 }) {
   if (!isOpen) return null;
 
+  const displayName = activePatient ? `${activePatient.first_name} ${activePatient.last_name}` : "Mohsin Ali";
+  const displayId = activePatient ? activePatient.id.slice(0, 8).toUpperCase() : "PAT-8842";
+
   return (
-    <div className="lg:hidden fixed inset-0 z-30 flex">
+    <div className="lg:hidden fixed inset-0 z-50 flex">
       <div
         className="fixed inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      <div className="relative w-64 bg-white border-r border-gray-200 p-6 flex flex-col h-full">
+      <div className="relative w-64 bg-white border-r border-gray-200 p-6 flex flex-col h-full z-10">
         <div className="flex items-center justify-between mb-8">
           <div
             onClick={() => {
@@ -74,7 +77,7 @@ export default function MobileDrawer({
           })}
         </nav>
 
-        {/* Mobile Drawer Footer */}
+        {/* Mobile Drawer Footer - Static Active Patient Info & Health Tip */}
         <div className="mt-auto pt-6 border-t border-gray-100 space-y-4">
           <DailyHealthTip />
 
@@ -84,10 +87,10 @@ export default function MobileDrawer({
             </div>
             <div className="overflow-hidden">
               <p className="text-xs font-bold text-gray-800 truncate">
-                {patientInfo.name}
+                {displayName}
               </p>
               <p className="text-[10px] text-gray-400 font-medium truncate">
-                ID: {patientInfo.id}
+                ID: {displayId}
               </p>
             </div>
           </div>
