@@ -2,7 +2,13 @@ import React, { useState } from "react";
 import NotificationsDropdown from "../components/NotificationsDropdown";
 import PatientDropdown from "../components/PatientDropdown";
 
-export default function Header({ uploadedFilesCount }) {
+export default function Header({ 
+  uploadedFilesCount,
+  activePatient,
+  patients,
+  onSelectPatient,
+  onCreatePatient 
+}) {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
 
@@ -26,6 +32,10 @@ export default function Header({ uploadedFilesCount }) {
         isOpen={isAccountOpen}
         onToggle={toggleAccount}
         uploadedFilesCount={uploadedFilesCount}
+        activePatient={activePatient}
+        patients={patients}
+        onSelectPatient={onSelectPatient}
+        onCreatePatient={onCreatePatient}
       />
     </header>
   );

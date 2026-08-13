@@ -62,3 +62,13 @@ frontend/
 3. Removed hardcoded mockData arrays, but the daily health tips are still hardcoded.
 
 ---
+
+## Day 4: Patient Profile Registration (8/13/2026)
+
+---
+
+1. Added Patient Profile Registration & Switcher dropdown.
+2. Modified patient header names (`detected_patient_name`) to show extracted patient name during backend OCR background tasks in `tasks.py`.
+3. Fixed issues with Mobile design. The dropdowns and header were going out of the page.
+
+---

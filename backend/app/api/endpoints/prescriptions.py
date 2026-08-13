@@ -17,7 +17,7 @@ def upload_prescription(
     patient_id: str = None,
     db: Session = Depends(get_db)
 ):
-    allowed_extensions = {".jpg",".jpeg",".png"}
+    allowed_extensions = {".jpg", ".jpeg", ".png"}
     file_ext = os.path.splitext(file.filename)[1].lower()
     if file_ext not in allowed_extensions:
         raise HTTPException(
@@ -62,6 +62,7 @@ def upload_prescription(
         "file_name": db_prescription.file_name,
         "file_path": db_prescription.file_path,
         "status": db_prescription.status,
+        "detected_patient_name": db_prescription.detected_patient_name,
         "uploaded_at": db_prescription.uploaded_at.isoformat() if db_prescription.uploaded_at else None
     }
 
@@ -86,6 +87,7 @@ def list_prescriptions(db: Session = Depends(get_db)):
             "file_name": p.file_name,
             "status": p.status,
             "raw_text": p.raw_text,
+            "detected_patient_name": p.detected_patient_name,
             "uploaded_at": p.uploaded_at.isoformat() if p.uploaded_at else None,
             "medications": meds
         })
@@ -118,6 +120,7 @@ def get_prescription(id: str, db: Session = Depends(get_db)):
         "file_name": p.file_name,
         "status": p.status,
         "raw_text": p.raw_text,
+        "detected_patient_name": p.detected_patient_name,
         "uploaded_at": p.uploaded_at.isoformat() if p.uploaded_at else None,
         "medications": meds
     }
