@@ -181,8 +181,14 @@ export default function DashboardPage({
                     <p className="text-xs text-gray-400">{file.size} • Uploaded at {file.uploadedAt}</p>
                   </div>
                 </div>
-                <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 animate-pulse flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-amber-500"></span>
+                <span className={`px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 ${
+                  file.status === 'Completed' || file.status === 'Parsed' 
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                    : 'bg-amber-50 text-amber-700 border border-amber-200 animate-pulse'
+                }`}>
+                  <span className={`h-1.5 w-1.5 rounded-full ${
+                    file.status === 'Completed' || file.status === 'Parsed' ? 'bg-emerald-500' : 'bg-amber-500'
+                  }`}></span>
                   {file.status || "Processing OCR"}
                 </span>
               </div>

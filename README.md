@@ -49,7 +49,7 @@ frontend/
 ---
 
 1. Enabled `CORSMiddleware` in `backend/app/main.py` allowing frontend cross-origin requests.
-2. Modified endpoint files to add new endpoints to retrieve uploaded prescriptions,labreports and parsed medication lists, evaluated biomarker reference values.
+2. Modified endpoint files to add new endpoints to retrieve uploaded prescriptions, lab reports and parsed medication lists, evaluated biomarker reference values.
 
 ---
 
@@ -70,5 +70,16 @@ frontend/
 1. Added Patient Profile Registration & Switcher dropdown.
 2. Modified patient header names (`detected_patient_name`) to show extracted patient name during backend OCR background tasks in `tasks.py`.
 3. Fixed issues with Mobile design. The dropdowns and header were going out of the page.
+
+---
+
+## Day 5: Dynamic Profile Filtering & Admin Console (8/14/2026)
+
+---
+
+1. Updated React state in `App.jsx` and `api.js` to only show prescriptions and evaluated biomarkers of the selected patient profile.
+2. Built OCR Patient Mismatch Verification Announcement Banner with 3 interactive action choices (Create New Profile, Keep in Current Profile, Dismiss) with local storage resolution persistence.
+3. Created Password-Locked **Admin Console** mode in the patient dropdown menu.
+4. Synchronized real-time queue item statuses (`Uploading` -> `Processing OCR` -> `Completed`) with live PostgreSQL OCR task execution states.
 
 ---

@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS prescriptions (
     file_path VARCHAR(255) NOT NULL,
     status VARCHAR(50) NOT NULL DEFAULT 'PENDING', -- 'PENDING','PROCESSING','COMPLETED','FAILED'
     raw_text TEXT,
+    detected_patient_name VARCHAR(255),
     uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -30,9 +31,11 @@ CREATE TABLE IF NOT EXISTS medications (
 CREATE TABLE IF NOT EXISTS blood_reports (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     patient_id UUID REFERENCES patients(id) ON DELETE SET NULL, 
+    file_name VARCHAR(255) NOT NULL,
     file_path VARCHAR(255) NOT NULL,
     status VARCHAR(50) NOT NULL DEFAULT 'PENDING', -- 'PENDING','PROCESSING','COMPLETED','FAILED'
     raw_text TEXT,
+    detected_patient_name VARCHAR(255),
     uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

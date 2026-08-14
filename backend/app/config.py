@@ -7,5 +7,6 @@ class Settings:
     DATABASE_URL: str = os.getenv("DATABASE_URL")
     GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY")
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY")
+    ADMIN_PASSWORD: str = os.getenv("ADMIN_PASSWORD", "admin101")
     
 settings = Settings()

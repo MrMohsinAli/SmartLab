@@ -1,7 +1,9 @@
 import os
 import uuid
+from typing import Optional
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from app.database import get_db
 from app.models import BloodReport, Patient
 from app.services.tasks import process_blood_report_task
@@ -14,7 +16,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 def upload_blood_report(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
-    patient_id: str = None,
+    patient_id: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
     allowed_extensions = {".jpg", ".jpeg", ".png", ".pdf"}
@@ -67,8 +69,16 @@ def upload_blood_report(
     }
 
 @router.get("/")
-def list_blood_reports(db: Session = Depends(get_db)):
-    reports = db.query(BloodReport).order_by(BloodReport.uploaded_at.desc()).all()
+def list_blood_reports(patient_id: Optional[str] = None, db: Session = Depends(get_db)):
+    query = db.query(BloodReport)
+    if patient_id:
+        try:
+            p_uuid = uuid.UUID(patient_id)
+            query = query.filter(or_(BloodReport.patient_id == p_uuid, BloodReport.patient_id.is_(None)))
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid patient_id format.")
+            
+    reports = query.order_by(BloodReport.uploaded_at.desc()).all()
     result = []
     for r in reports:
         bms = [

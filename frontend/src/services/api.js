@@ -44,16 +44,24 @@ export async function uploadBloodReport(file, patientId = null) {
   return await response.json();
 }
 
-export async function fetchPrescriptions() {
-  const response = await fetch(`${API_BASE_URL}/prescriptions/`);
+export async function fetchPrescriptions(patientId = null) {
+  let url = `${API_BASE_URL}/prescriptions/`;
+  if (patientId) {
+    url += `?patient_id=${patientId}`;
+  }
+  const response = await fetch(url);
   if (!response.ok) {
     throw new Error('Failed to fetch prescriptions from backend');
   }
   return await response.json();
 }
 
-export async function fetchBloodReports() {
-  const response = await fetch(`${API_BASE_URL}/blood-reports/`);
+export async function fetchBloodReports(patientId = null) {
+  let url = `${API_BASE_URL}/blood-reports/`;
+  if (patientId) {
+    url += `?patient_id=${patientId}`;
+  }
+  const response = await fetch(url);
   if (!response.ok) {
     throw new Error('Failed to fetch blood reports from backend');
   }
@@ -83,4 +91,25 @@ export async function createPatient(patientData) {
   }
 
   return await response.json();
+}
+
+export async function verifyAdminPassword(password) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/patients/verify-admin-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ password }),
+    });
+
+    if (!response.ok) {
+      return { valid: false };
+    }
+
+    return await response.json();
+  } catch (err) {
+    console.error("Admin verification request failed:", err);
+    return { valid: false };
+  }
 }

@@ -1,7 +1,9 @@
 import os
 import uuid
+from typing import Optional
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from app.database import get_db
 from app.models import Prescription, Patient
 from app.services.tasks import process_prescription_task
@@ -14,7 +16,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 def upload_prescription(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
-    patient_id: str = None,
+    patient_id: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
     allowed_extensions = {".jpg", ".jpeg", ".png"}
@@ -67,8 +69,16 @@ def upload_prescription(
     }
 
 @router.get("/")
-def list_prescriptions(db: Session = Depends(get_db)):
-    prescriptions = db.query(Prescription).order_by(Prescription.uploaded_at.desc()).all()
+def list_prescriptions(patient_id: Optional[str] = None, db: Session = Depends(get_db)):
+    query = db.query(Prescription)
+    if patient_id:
+        try:
+            p_uuid = uuid.UUID(patient_id)
+            query = query.filter(or_(Prescription.patient_id == p_uuid, Prescription.patient_id.is_(None)))
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid patient_id format.")
+            
+    prescriptions = query.order_by(Prescription.uploaded_at.desc()).all()
     result = []
     for p in prescriptions:
         meds = [
