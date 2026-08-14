@@ -5,7 +5,7 @@ import PatientDropdown from "../components/PatientDropdown";
 export default function Header({ 
   uploadedFilesCount,
   activePatient,
-  patients,
+  patients = [],
   onSelectPatient,
   onCreatePatient 
 }) {

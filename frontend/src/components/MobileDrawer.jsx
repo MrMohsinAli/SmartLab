@@ -13,7 +13,7 @@ export default function MobileDrawer({
   if (!isOpen) return null;
 
   const displayName = activePatient ? `${activePatient.first_name} ${activePatient.last_name}` : "Mohsin Ali";
-  const displayId = activePatient ? activePatient.id.slice(0, 8).toUpperCase() : "PAT-8842";
+  const displayId = activePatient ? `PAT-${activePatient.id.slice(0, 8).toUpperCase()}` : "PAT-8842";
 
   return (
     <div className="lg:hidden fixed inset-0 z-50 flex">

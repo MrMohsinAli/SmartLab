@@ -1,9 +1,11 @@
 import React from "react";
 import { User } from "lucide-react";
 import DailyHealthTip from "./DailyHealthTip";
-import { patientInfo } from "../data/mockData";
 
-export default function Sidebar({ activeTab, setActiveTab, menuItems }) {
+export default function Sidebar({ activeTab, setActiveTab, menuItems, activePatient }) {
+  const displayName = activePatient ? `${activePatient.first_name} ${activePatient.last_name}` : "Mohsin Ali";
+  const displayId = activePatient ? `PAT-${activePatient.id.slice(0, 8).toUpperCase()}` : "PAT-8842";
+
   return (
     <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 p-6 shrink-0 shadow-sm">
       <div
@@ -59,17 +61,17 @@ export default function Sidebar({ activeTab, setActiveTab, menuItems }) {
       <div className="mt-auto pt-6 border-t border-gray-100 space-y-4">
         <DailyHealthTip />
 
-        {/* Patient Profile Footer */}
+        {/* Dynamic Active Patient Profile Footer */}
         <div className="flex items-center gap-3 px-1 py-1">
           <div className="h-9 w-9 rounded-full bg-[#8989ba]/20 text-[#6a699a] flex items-center justify-center font-bold text-xs shrink-0">
             <User size={16} />
           </div>
           <div className="overflow-hidden">
             <p className="text-xs font-bold text-gray-800 truncate">
-              {patientInfo.name}
+              {displayName}
             </p>
-            <p className="text-[10px] text-gray-400 font-medium truncate">
-              ID: {patientInfo.id}
+            <p className="text-[10px] font-mono text-gray-400 font-medium truncate">
+              ID: {displayId}
             </p>
           </div>
         </div>
